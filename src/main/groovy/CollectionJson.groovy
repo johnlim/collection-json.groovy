@@ -1,5 +1,13 @@
+import groovy.json.JsonBuilder
+
 class CollectionJson {
   def create() {
-    return 1
+    JsonBuilder jsonBuilder = new JsonBuilder()
+    def root = jsonBuilder.collection{
+        version null
+        href null
+    }
+
+    return jsonBuilder.toString()
   }
 }

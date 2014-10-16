@@ -1,13 +1,22 @@
 import groovy.json.JsonBuilder
 
 class CollectionJson {
-  def create() {
-    JsonBuilder jsonBuilder = new JsonBuilder()
-    def root = jsonBuilder.collection{
-        version null
-        href null
-    }
+  def version
+  def href
+  def items = []
 
-    return jsonBuilder.toString()
+  String create() {
+    JsonBuilder jsonBuilder = new JsonBuilder()
+    jsonBuilder(collection : this)
+    jsonBuilder.toString()
   }
+
+  def populateItems(Items item) {
+    items << item
+  }
+}
+
+class Items {
+
+
 }

@@ -11,12 +11,22 @@ class CollectionJson {
     jsonBuilder.toString()
   }
 
-  def populateItems(Items item) {
+  def addItems(Items item) {
     items << item
+    this
   }
 }
 
 class Items {
+  String href
+  def data = []
 
+  Items addData(Data dataObject){
+    data << dataObject
+    this
+  }
+}
+
+class Data {
 
 }

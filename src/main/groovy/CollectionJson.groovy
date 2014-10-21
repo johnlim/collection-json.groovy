@@ -1,3 +1,5 @@
+package org.collectionjason.groovy
+
 import groovy.json.JsonBuilder
 
 class CollectionJson {

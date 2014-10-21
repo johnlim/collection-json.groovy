@@ -1,3 +1,5 @@
+package org.collectionjason.groovy
+
 import groovy.json.JsonSlurper
 import spock.lang.*
 
@@ -94,86 +96,68 @@ class CollectionJsonSpec extends Specification {
     items.data.size() == 2
   }
 
-  def "Data may have any of three possible properties: name, value, prompt"() {
+  def "Data contain objects with name, value and prompt child properties"() {
     Data data = new Data(name: "data", value: "value", prompt: "prompt")
 
     expect:
     data != null
   }
 
-  def "Data's name property should be of String type"() {
+  def "Data's name property should be of String data type"() {
     Data data = new Data()
-    data.name = false
+    data.name = "string"
+
     expect:
+    data.name == "string"
     data.name instanceof String
   }
 
-  def "Data's prompt property should be of String type"() {
+  def "Data's prompt property should be of String data type"() {
     Data data = new Data()
-    data.prompt = false
+    data.prompt = "string"
+
     expect:
+    data.prompt == "string"
     data.prompt instanceof String
   }
 
-  def "Data's value property MAY contain Boolean"() {
-    given:
-    Data data = new Data()
-
+  @Unroll("Data's value property MAY contain #inputValue")
+  def "Data's value property  MAY contain one of the following data types: STRING NUMBER true false or null"(){
     when:
-    data.value = true
+    Data data = new Data(value: inputValue)
 
     then:
-    data.value instanceof Boolean
-  }
-  def "Data's value property MAY contain STRING"() {
-    given:
-    Data data = new Data()
+    data.value == expected
 
-    when:
-    data.value = "string"
+    where:
+    inputValue | expected
+    "string"   | "string"
+    0          | 0
+    false      | false
+    null       | null
 
-    then:
-    data.value instanceof String
   }
 
-  def "Data's value property MAY contain NUMBER"() {
-    given:
-    Data data = new Data()
-
-    when:
-    data.value =  0
-
-    then:
-    data.value instanceof Integer
-  }
-
-  def "Data's value property MAY contain null"() {
-    given:
-    Data data = new Data()
-
-    when:
-    data.value = null
-
-    then:
-    data.value  == null
-  }
-
-  def "Items' data array can store data objects with different value types"() {
-    given:
+  def "A collection's items' data array can store objects with different value types"() {
+    given: "that value property MAY contain one of the following data types: STRING, NUMBER, true, false or null"
     Data stringData = new Data(value: "string")
     Data integerData = new Data(value: 0)
     Data booleanData = new Data(value: false)
     Data nullData = new Data(value: null )
+    Items item = new Items()
+    item.addData(stringData).addData(integerData).addData(booleanData).addData(nullData)
 
-    when:
-    Items items = new Items()
-    items.addData(stringData).addData(integerData).addData(booleanData).addData(nullData)
+    when: "collectionJson is created with the different value types"
+    collectionJson.addItems(item)
+    String json = collectionJson.create()
+    def result = jsonSlurper.parseText(json)
 
-    then:
-    items.data[0].value == "string"
-    items.data[1].value == 0
-    items.data[2].value == false
-    items.data[3].value == null
+    then: "the json constructed should contain the correct value types"
+    int i = 0
+    result.collection.items[0].data[i].value == "string"
+    result.collection.items[0].data[++i].value == 0
+    result.collection.items[0].data[++i].value == false
+    result.collection.items[0].data[++i].value == null
   }
 
   def "Items array may have links array child property"() {
@@ -184,6 +168,5 @@ class CollectionJsonSpec extends Specification {
     expect:
     items.links != null
   }
-
 
 }

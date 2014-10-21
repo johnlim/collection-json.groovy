@@ -1,4 +1,4 @@
-package org.collectionjason.groovy
+package org.groovy.collectionjson
 
 import groovy.json.JsonBuilder
 

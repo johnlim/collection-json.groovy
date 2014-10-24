@@ -29,17 +29,20 @@ class Items {
     this
   }
 
-  void addLink(Links link){
+  Items addLink(Links link){
     links << link
+    this
   }
 }
 
-class Data {
-  String prompt
-  String name
-  def value
+class Links {
+  String render = "link"
 }
 
-class Links {
+public enum Render{
+  IMAGE("image"),
+  LINK("link")
 
+  final String string
+  private Render(String string) {this.string = string}
 }

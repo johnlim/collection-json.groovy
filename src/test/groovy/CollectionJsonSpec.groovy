@@ -1,5 +1,6 @@
 package org.groovy.collectionjson
 
+import org.groovy.collectionjson.*
 import groovy.json.JsonSlurper
 import spock.lang.*
 
@@ -67,6 +68,28 @@ class CollectionJsonSpec extends Specification {
     result.collection.items.size() == 2
   }
 
+  def "A collection's items' data array can store objects with different value types"() {
+    given: "that value property MAY contain one of the following data types: STRING, NUMBER, true, false or null"
+    Data stringData = new Data(value: "string")
+    Data integerData = new Data(value: 0)
+    Data booleanData = new Data(value: false)
+    Data nullData = new Data(value: null )
+    Items item = new Items()
+    item.addData(stringData).addData(integerData).addData(booleanData).addData(nullData)
+
+    when: "collectionJson is created with the different value types"
+    collectionJson.addItems(item)
+    String json = collectionJson.create()
+    def result = jsonSlurper.parseText(json)
+
+    then: "the json constructed should contain the correct value types"
+    int i = 0
+    result.collection.items[0].data[i].value == "string"
+    result.collection.items[0].data[++i].value == 0
+    result.collection.items[0].data[++i].value == false
+    result.collection.items[0].data[++i].value == null
+  }
+
   def "items array should have href property"() {
     Items items = new Items(href: "www.items.com")
     collectionJson.addItems(items)
@@ -96,70 +119,6 @@ class CollectionJsonSpec extends Specification {
     items.data.size() == 2
   }
 
-  def "Data contain objects with name, value and prompt child properties"() {
-    Data data = new Data(name: "data", value: "value", prompt: "prompt")
-
-    expect:
-    data != null
-  }
-
-  def "Data's name property should be of String data type"() {
-    Data data = new Data()
-    data.name = "string"
-
-    expect:
-    data.name == "string"
-    data.name instanceof String
-  }
-
-  def "Data's prompt property should be of String data type"() {
-    Data data = new Data()
-    data.prompt = "string"
-
-    expect:
-    data.prompt == "string"
-    data.prompt instanceof String
-  }
-
-  @Unroll("Data's value property MAY contain #inputValue")
-  def "Data's value property  MAY contain one of the following data types: STRING NUMBER true false or null"(){
-    when:
-    Data data = new Data(value: inputValue)
-
-    then:
-    data.value == expected
-
-    where:
-    inputValue | expected
-    "string"   | "string"
-    0          | 0
-    false      | false
-    null       | null
-
-  }
-
-  def "A collection's items' data array can store objects with different value types"() {
-    given: "that value property MAY contain one of the following data types: STRING, NUMBER, true, false or null"
-    Data stringData = new Data(value: "string")
-    Data integerData = new Data(value: 0)
-    Data booleanData = new Data(value: false)
-    Data nullData = new Data(value: null )
-    Items item = new Items()
-    item.addData(stringData).addData(integerData).addData(booleanData).addData(nullData)
-
-    when: "collectionJson is created with the different value types"
-    collectionJson.addItems(item)
-    String json = collectionJson.create()
-    def result = jsonSlurper.parseText(json)
-
-    then: "the json constructed should contain the correct value types"
-    int i = 0
-    result.collection.items[0].data[i].value == "string"
-    result.collection.items[0].data[++i].value == 0
-    result.collection.items[0].data[++i].value == false
-    result.collection.items[0].data[++i].value == null
-  }
-
   def "Items array may have links array child property"() {
     Items items = new Items()
     Links link = new Links()
@@ -167,6 +126,40 @@ class CollectionJsonSpec extends Specification {
 
     expect:
     items.links != null
+  }
+
+  def "Items array can store multiple links"() {
+    Items items = new Items()
+    Links link = new Links()
+    Links anotherLink = new Links()
+    items.addLink(link).addLink(anotherLink)
+
+    expect:
+    items.links.size() == 2
+  }
+
+  def "Links can contain a render property"() {
+    Links link = new Links(render: "image")
+
+    expect:
+    link.render == "image"
+
+  }
+
+  def "render property should be set to link if not explicitly specfied"() {
+    Links link = new Links()
+
+    expect:
+    link.render == "link"
+  }
+
+  def "render property MUST be either image or link"(){
+    Links link = new Links(render: Render.IMAGE.string)
+    Links anotherLink = new Links(render: Render.LINK.string)
+
+    expect:
+    link.render == "image"
+    anotherLink.render == "link"
   }
 
 }

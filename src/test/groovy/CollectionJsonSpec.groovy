@@ -139,7 +139,7 @@ class CollectionJsonSpec extends Specification {
   }
 
   def "Links can contain a render property"() {
-    Links link = new Links(render: "image")
+    Links link = new Links(render: Render.IMAGE)
 
     expect:
     link.render == "image"
@@ -154,8 +154,8 @@ class CollectionJsonSpec extends Specification {
   }
 
   def "render property MUST be either image or link"(){
-    Links link = new Links(render: Render.IMAGE.string)
-    Links anotherLink = new Links(render: Render.LINK.string)
+    Links link = new Links(render: Render.IMAGE)
+    Links anotherLink = new Links(render: Render.LINK)
 
     expect:
     link.render == "image"

@@ -36,7 +36,10 @@ class Items {
 }
 
 class Links {
-  String render = "link"
+  private String render = Render.LINK.string
+  void setRender(Render renderType){
+    this.render = renderType.string
+  }
 }
 
 public enum Render{

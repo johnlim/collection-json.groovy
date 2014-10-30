@@ -1,5 +1,9 @@
+version = '0.0'
+group = 'org.groovy.collectionjson'
+
 apply plugin: "groovy"
 apply plugin: "idea"
+apply plugin: 'maven'
 
 repositories {
   mavenCentral()
